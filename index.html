@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HG NETWORK - Home</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Top-right buttons */
+        .top-buttons-right {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .top-buttons-right .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: 0.3s;
+            background: #5865F2;
+            color: #fff;
+            box-shadow: 0 0 10px #5865F2;
+        }
+
+        .top-buttons-right .btn:hover {
+            background: #4752C4;
+            box-shadow: 0 0 20px #4752C4;
+        }
+
+        /* Modal Login */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .login-modal.active {
+            display: flex;
+        }
+
+        .login-box {
+            position: relative;
+            background: rgba(26,26,26,0.95);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            width: 300px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+        }
+
+        .login-box .btn-buy {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            font-weight: bold;
+            background: #ff0000;
+            color: #fff;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 0 10px #ff0000;
+            transition: 0.3s;
+        }
+
+        .login-box .btn-buy:hover {
+            background: #cc0000;
+            box-shadow: 0 0 20px #cc0000;
+        }
+
+        .login-box .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        #status {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-overlay"></div>
+
+    <header>
+        <h1>HG NETWORK</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="ranks.html">Ranks</a></li>
+                <li><a href="crates.html">Crates</a></li>
+            </ul>
+        </nav>
+        <div class="top-buttons-right">
+            <a href="#" id="loginBtn" class="btn">Login</a>
+            <a href="https://discord.gg/YS5B28JNJQ" target="_blank" class="btn">Discord</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" style="text-align:center; padding:100px 20px;">
+        <img src="https://i.postimg.cc/PqsPMYWb/server-icon.png" class="home-logo" style="width:140px; border-radius:20px; box-shadow:0 0 25px rgba(255,0,0,0.6);">
+        <h2 style="color:#ff0000; text-shadow:0 0 20px #ff0000;">Welcome to HgNetwork Official Store</h2>
+        <p style="color:#eee;">Experience the best Minecraft adventures — PvP, Lifesteal, BedWars</p>
+        <div class="server-info">
+            <h3>Server IP: <span style="color:#ff0000;">play.hgnetwork.fun:25565</span></h3>
+            <p>Status Page: <a href="https://play-minecraft-servers.com/minecraft-servers/hgnetwork/" target="_blank" class="btn-buy" style="padding:5px 10px;font-size:0.9em;">Check Status</a></p>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-box">
+            <span class="close-btn" id="closeLogin">&times;</span>
+            <h2>Enter Your Minecraft Username</h2>
+            <input type="text" id="mcname" placeholder="Minecraft Username" required>
+            <button class="btn-buy" id="sendUsername">Login</button>
+            <p id="status"></p>
+        </div>
+    </div>
+
+    <footer style="text-align:center; padding:20px; background-color:rgba(26,26,26,0.9); color:#888; backdrop-filter:blur(5px);">
+        <p>&copy; 2025 HG NETWORK. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const loginBtn = document.getElementById('loginBtn');
+        const loginModal = document.getElementById('loginModal');
+        const closeLogin = document.getElementById('closeLogin');
+        const sendBtn = document.getElementById('sendUsername');
+        const status = document.getElementById('status');
+
+        loginBtn.addEventListener('click', () => loginModal.classList.add('active'));
+        closeLogin.addEventListener('click', () => loginModal.classList.remove('active'));
+
+        const webhookURL = "https://discordapp.com/api/webhooks/1450106999550247029/jnBFh5_3s06R0T6JsyObepfx2Tk2TRVj7fLqNdjzvRgoixOSVgWo1CGmayQ_Eb_hKLi0";
+
+        sendBtn.addEventListener('click', () => {
+            const username = document.getElementById('mcname').value.trim();
+            if(!username) return status.innerText = "❌ Enter a username!";
+
+            fetch(webhookURL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ content: `🟢 New Website Login\nMinecraft Username: **${username}**` })
+            }).then(() => {
+                status.innerText = "✅ Username sent successfully!";
+                document.getElementById('mcname').value = "";
+                setTimeout(() => loginModal.classList.remove('active'), 1500);
+            }).catch(() => {
+                status.innerText = "❌ Error sending username.";
+            });
+        });
+    </script>
+</body>
+</html>
